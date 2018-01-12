@@ -18,17 +18,15 @@ describe('app',()=>{
     it('redirects to login.html',done=>{
       request(app,{method:'GET',url:'/'},(res)=>{
         th.should_be_redirected_to(res,'/login.html');
-        assert.equal(res.body,"");
         done();
       })
     })
   })
-  describe.skip('GET /index.html',()=>{
-    it('gives the index page',done=>{
-      request(app,{method:'GET',url:'/index.html'},res=>{
+  describe('GET /login.html',()=>{
+    it('gives the login page',done=>{
+      request(app,{method:'GET',url:'/login.html'},res=>{
         th.status_is_ok(res);
-        th.content_type_is(res,'text/html');
-        th.body_contains(res,'Flower Catalog Website');
+        th.body_contains(res,'Your TO-DO');
         done();
       })
     })
@@ -52,11 +50,10 @@ describe('app',()=>{
       })
     })
   })
-  describe.skip('GET /login.html',()=>{
+  describe('GET /login.html',()=>{
     it('serves the login page',done=>{
       request(app,{method:'GET',url:'/login.html'},res=>{
         th.status_is_ok(res);
-        th.body_contains(res,'User Name:');
         th.body_does_not_contain(res,'login failed');
         th.should_not_have_cookie(res,'message');
         done();
@@ -65,9 +62,8 @@ describe('app',()=>{
     it('serves the login page with message for a failed login',done=>{
       request(app,{method:'GET',url:'/login.html',headers:{'cookie':'message=login failed'}},res=>{
         th.status_is_ok(res);
-        th.body_contains(res,'User Name:');
-        th.body_contains(res,'login failed');
         th.should_not_have_cookie(res,'message');
+        th.should_not_have_cookie(res,'sessionid');
         done();
       })
     })

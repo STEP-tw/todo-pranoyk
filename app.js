@@ -2,6 +2,7 @@ const fs = require('fs');
 const timeStamp = require('./time.js').timeStamp;
 const WebApp = require('./webApp.js');
 const loginPage = fs.readFileSync('./static/login.html');
+const home = fs.readFileSync('./dynamic/homePage.html');
 
 let toS = o=>JSON.stringify(o,null,2);
 
@@ -56,7 +57,9 @@ app.usePostProcessor(serveStaticFile);
 app.usePostProcessor(serveStaticCssFile);
 
 app.get('/login.html', (req,res)=>{
-  res.setHeader('Content-Type',getHeader(req.url));
+  res.setHeader('Content-type','text/html');
+  if(req.cookies.message)
+    res.write(`Login Failed \n Invalid User`);
   res.write(loginPage);
   res.end();
 })
@@ -66,5 +69,25 @@ app.get('/login.css', (req,res)=>{
   res.write(fs.readFileSync('./static/css'+req.url));
   res.end();
 })
+
+app.get('/homePage', (req,res)=>{
+  res.write(home);
+  res.end();
+})
+
+app.post('/login.html',(req,res)=>{
+  let user = registered_users.find(u=>u.userName==req.body.userName);
+  console.log(user);
+  if(!user) {
+    res.setHeader('Set-Cookie',`message=Login Failed; Max-Age=5`);
+    res.redirect('/login.html');
+    return;
+  }
+  let sessionid = new Date().getTime();
+  res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
+  user.sessionid = sessionid;
+  console.log(sessionid);
+  res.redirect('/homePage');
+});
 
 exports.app = app;

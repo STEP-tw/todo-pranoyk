@@ -6,7 +6,7 @@ let app = require('../app.js').app;
 let th = require('./testHelper.js');
 
 describe('app',()=>{
-  describe.skip('GET /bad',()=>{
+  describe('GET /bad',()=>{
     it('responds with 404',done=>{
       request(app,{method:'GET',url:'/bad'},(res)=>{
         assert.equal(res.statusCode,404);

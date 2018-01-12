@@ -27,8 +27,25 @@ let loadUser = (req,res)=>{
   }
 };
 
+const getHeader = function (file) {
+  let extension = file.slice(file.lastIndexOf('.'));
+  let headers = {
+    '.html' : 'text/html',
+    '.jpg' : 'text/jpg',
+    '.pdf' : 'text/pdf',
+    '.css' : 'text/css',
+    '.gif' : 'text/gif',
+    '.js' : 'text/js'
+  }
+  return headers[extension];
+}
+
 const serveStaticFile = (req,res)=>{
   if(req.url=='/'&&!req.user) res.redirect('/login.html');
+}
+
+const serveStaticCssFile = (req,res)=>{
+  if(req.url=='/css/login.css'&&!req.user) res.redirect('/login.css');
 }
 
 
@@ -36,9 +53,17 @@ let app = WebApp.create();
 app.usePreProcessor(logRequest);
 app.usePreProcessor(loadUser);
 app.usePostProcessor(serveStaticFile);
+app.usePostProcessor(serveStaticCssFile);
 
 app.get('/login.html', (req,res)=>{
+  res.setHeader('Content-Type',getHeader(req.url));
   res.write(loginPage);
+  res.end();
+})
+
+app.get('/login.css', (req,res)=>{
+  res.setHeader('Content-Type',getHeader(req.url));
+  res.write(fs.readFileSync('./static/css'+req.url));
   res.end();
 })
 

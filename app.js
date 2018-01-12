@@ -1,6 +1,7 @@
 const fs = require('fs');
 const timeStamp = require('./time.js').timeStamp;
 const WebApp = require('./webApp.js');
+const NewToDo = require('./lib/newToDo.js');
 const loginPage = fs.readFileSync('./static/login.html');
 const home = fs.readFileSync('./dynamic/homePage.html');
 
@@ -18,7 +19,7 @@ let logRequest = (req,res)=>{
   console.log(`${req.method} ${req.url}`);
 }
 
-let registered_users = [{userName:'pranoyk', name:'Pranoy'}, {userName:'pavanigbn', name:'Pavani'}, {userName:'rahulp', name:'Rahul'}];
+let registered_users = [{userName:'pranoyk', name:'pranoy'}, {userName:'pavanigbn', name:'pavani'}, {userName:'rahulp', name:'rahul'}];
 
 let loadUser = (req,res)=>{
   let sessionid = req.cookies.sessionid;
@@ -41,12 +42,35 @@ const getHeader = function (file) {
   return headers[extension];
 }
 
+const retrieveData = (newData,req,res)=>{
+  let data = fs.readFileSync(`./data/${req.user.name}.js`,'utf8');
+  let commentData = data.split('= ')[1];
+  let modifiedData = JSON.parse(commentData);
+  modifiedData.unshift(newData);
+  return finalComment = `var data = ${JSON.stringify(modifiedData,null,2)}`;
+}
+
 const storeToDo = (req,res)=>{
   let name = req.user.name;
-  let title = req.body.title;
-  let description = req.body.description;
-  res.write(`${name} ${title} ${description}`);
-  res.end();
+  let newData = new NewToDo(req.body,name);
+  let toDoItems = newData.processData()
+  let retrievedData = retrieveData(toDoItems,req,res);
+  fs.writeFileSync(`./data/${req.user.name}.js`,retrievedData);
+  res.redirect('/homePage');
+}
+
+const serveDynamicFiles = (req,res)=>{
+  if (req.method=='GET'&&fs.existsSync(`./dynamic${req.url}`)) {
+    res.write(fs.readFileSync(`./dynamic/${req.url}`));
+    res.end();
+  }
+}
+
+const serveData = (req,res)=>{
+  if (req.url.includes('data/')) {
+    res.write(fs.readFileSync(req.url));
+    res.end();
+  }
 }
 
 const serveStaticFile = (req,res)=>{
@@ -102,9 +126,22 @@ app.get('/addToDo.html', (req,res)=>{
   res.end();
 })
 
+app.get('/viewToDo.html', (req,res)=>{
+  res.write(fs.readFileSync('./dynamic/viewToDo.html'));
+  res.end();
+})
+
 app.post('/newToDo',(req,res)=>{
   storeToDo(req,res);
-  res.write(`To-Do Saved`);
+})
+
+app.get('/data/pranoy.js',(req,res)=>{
+  res.write(fs.readFileSync('./data/pranoy.js'));
+  res.end();
+})
+
+app.get('/js/renderTitle.js',(req,res)=>{
+  res.write(fs.readFileSync('./dynamic/js/renderTitle.js'));
   res.end();
 })
 

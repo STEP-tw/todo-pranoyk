@@ -77,6 +77,10 @@ const serveStaticFile = (req,res)=>{
   if(req.url=='/'&&!req.user) res.redirect('/login.html');
 }
 
+const redirectToHomePage = (req,res)=>{
+  if(req.url=='/'&&req.user) res.redirect('/homePage');
+}
+
 const serveStaticCssFile = (req,res)=>{
   if(req.url=='/css/login.css'&&!req.user) res.redirect('/login.css');
 }
@@ -86,6 +90,11 @@ app.usePreProcessor(logRequest);
 app.usePreProcessor(loadUser);
 app.usePostProcessor(serveStaticFile);
 app.usePostProcessor(serveStaticCssFile);
+app.usePreProcessor(redirectToHomePage);
+
+app.get('/logout',(req,res)=>{
+  res.redirect('/login.html');
+})
 
 app.get('/login.html', (req,res)=>{
   res.setHeader('Content-type','text/html');

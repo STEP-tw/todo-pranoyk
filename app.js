@@ -49,12 +49,17 @@ const serveStaticCssFile = (req,res)=>{
   if(req.url=='/css/login.css'&&!req.user) res.redirect('/login.css');
 }
 
+const redirectToAddToDo = (req,res)=>{
+  if(req.url=='/addToDo.html') res.redirect('/addToDo');
+}
 
 let app = WebApp.create();
 app.usePreProcessor(logRequest);
 app.usePreProcessor(loadUser);
 app.usePostProcessor(serveStaticFile);
 app.usePostProcessor(serveStaticCssFile);
+// app.usePreProcessor(redirectToAddToDo);
+
 
 app.get('/login.html', (req,res)=>{
   res.setHeader('Content-type','text/html');
@@ -89,5 +94,10 @@ app.post('/login.html',(req,res)=>{
   console.log(sessionid);
   res.redirect('/homePage');
 });
+
+app.get('/addToDo.html', (req,res)=>{
+  res.write(fs.readFileSync('./dynamic/addToDo.html'));
+  res.end();
+})
 
 exports.app = app;

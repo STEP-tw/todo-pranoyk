@@ -31,6 +31,15 @@ describe('app',()=>{
       })
     })
   })
+  describe('GET /addToDo.html',()=>{
+    it('gives add To-Do page when user id logged in',done=>{
+      request(app,{method:'GET',url:'/addToDo.html'},res=>{
+        th.status_is_ok(res);
+        th.body_contains(res,'New To-Do');
+        done();
+      })
+    })
+  })
   describe.skip('GET /images/freshorigins.jpg',()=>{
     it('serves the image',done=>{
       request(app,{method:'GET',url:'/images/freshorigins.jpg'},res=>{

@@ -41,6 +41,14 @@ const getHeader = function (file) {
   return headers[extension];
 }
 
+const storeToDo = (req,res)=>{
+  let name = req.user.name;
+  let title = req.body.title;
+  let description = req.body.description;
+  res.write(`${name} ${title} ${description}`);
+  res.end();
+}
+
 const serveStaticFile = (req,res)=>{
   if(req.url=='/'&&!req.user) res.redirect('/login.html');
 }
@@ -49,17 +57,11 @@ const serveStaticCssFile = (req,res)=>{
   if(req.url=='/css/login.css'&&!req.user) res.redirect('/login.css');
 }
 
-const redirectToAddToDo = (req,res)=>{
-  if(req.url=='/addToDo.html') res.redirect('/addToDo');
-}
-
 let app = WebApp.create();
 app.usePreProcessor(logRequest);
 app.usePreProcessor(loadUser);
 app.usePostProcessor(serveStaticFile);
 app.usePostProcessor(serveStaticCssFile);
-// app.usePreProcessor(redirectToAddToDo);
-
 
 app.get('/login.html', (req,res)=>{
   res.setHeader('Content-type','text/html');
@@ -97,6 +99,12 @@ app.post('/login.html',(req,res)=>{
 
 app.get('/addToDo.html', (req,res)=>{
   res.write(fs.readFileSync('./dynamic/addToDo.html'));
+  res.end();
+})
+
+app.post('/newToDo',(req,res)=>{
+  storeToDo(req,res);
+  res.write(`To-Do Saved`);
   res.end();
 })
 

@@ -14,6 +14,7 @@ describe('app',()=>{
       })
     })
   })
+
   describe('GET /',()=>{
     it('redirects to login.html',done=>{
       request(app,{method:'GET',url:'/'},(res)=>{
@@ -22,6 +23,7 @@ describe('app',()=>{
       })
     })
   })
+
   describe('GET /login.html',()=>{
     it('gives the login page',done=>{
       request(app,{method:'GET',url:'/login.html'},res=>{
@@ -31,6 +33,7 @@ describe('app',()=>{
       })
     })
   })
+
   describe('GET /addToDo.html',()=>{
     it('gives add To-Do page when user id logged in',done=>{
       request(app,{method:'GET',url:'/addToDo.html'},res=>{
@@ -40,25 +43,7 @@ describe('app',()=>{
       })
     })
   })
-  describe.skip('GET /images/freshorigins.jpg',()=>{
-    it('serves the image',done=>{
-      request(app,{method:'GET',url:'/images/freshorigins.jpg'},res=>{
-        th.status_is_ok(res);
-        th.content_type_is(res,'image/jpg');
-        done();
-      })
-    })
-  })
-  describe.skip('GET /scripts/flowerCatalog.js',()=>{
-    it('serves the javascript source',done=>{
-      request(app,{method:'GET',url:'/scripts/flowerCatalog.js'},res=>{
-        th.status_is_ok(res);
-        th.content_type_is(res,'text/javascript');
-        th.body_contains(res,'hidePot');
-        done();
-      })
-    })
-  })
+
   describe('GET /login.html',()=>{
     it('serves the login page',done=>{
       request(app,{method:'GET',url:'/login.html'},res=>{
@@ -78,29 +63,20 @@ describe('app',()=>{
     })
   })
 
-  describe.skip('POST /login',()=>{
-    it('redirects to guestBook for valid user',done=>{
-      request(app,{method:'POST',url:'/login',body:'username=arvind'},res=>{
-        th.should_be_redirected_to(res,'/guestBook');
+  describe('POST /login.html',()=>{
+    it('redirects to homePage for valid user',done=>{
+      request(app,{method:'POST',url:'/login.html',body:'userName=pranoyk'},res=>{
+        th.should_be_redirected_to(res,'/homePage');
         th.should_not_have_cookie(res,'message');
         done();
       })
     })
     it('redirects to login.html with message for invalid user',done=>{
-      request(app,{method:'POST',url:'/login',body:'username=badUser'},res=>{
+      request(app,{method:'POST',url:'/login.html',body:'username=badUser'},res=>{
         th.should_be_redirected_to(res,'/login.html');
-        th.should_have_expiring_cookie(res,'message','login failed');
+        th.should_have_expiring_cookie(res,'message','Login Failed');
         done();
       })
     })
   })
-
-  describe.skip('POST /submitForm',()=>{
-    it('serves the javascript source',done=>{
-      request(app,{method:'POST',url:'/submitForm',body:'name=Foo&comment=Faa'},res=>{
-        th.should_be_redirected_to(res,'/guestBook');
-        done();
-      })
-    })
-  })
-})
+});

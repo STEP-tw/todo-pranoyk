@@ -1,5 +1,27 @@
 {
   "devDependencies": {
     "chai": "^4.1.2"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "todo_app",
+  "description": "## Objective",
+  "version": "1.0.0",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/STEP-tw/todo-pranoyk.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/STEP-tw/todo-pranoyk/issues"
+  },
+  "homepage": "https://github.com/STEP-tw/todo-pranoyk#readme"
 }

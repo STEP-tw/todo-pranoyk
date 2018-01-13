@@ -74,7 +74,7 @@ const serveData = (req,res)=>{
 }
 
 const serveStaticFile = (req,res)=>{
-  if(req.url=='/'&&!req.user) res.redirect('/login.html');
+  if(req.urlIsOneOf(['/','login.html'])&&!req.user) res.redirect('/login.html');
 }
 
 const redirectToHomePage = (req,res)=>{
@@ -82,7 +82,7 @@ const redirectToHomePage = (req,res)=>{
 }
 
 const serveStaticCssFile = (req,res)=>{
-  if(req.url=='/css/login.css'&&!req.user) res.redirect('/login.css');
+  if(req.url=='/css/login.css') res.redirect('/login.css');
 }
 
 let app = WebApp.create();
@@ -151,6 +151,11 @@ app.get('/data/pranoy.js',(req,res)=>{
 
 app.get('/js/renderTitle.js',(req,res)=>{
   res.write(fs.readFileSync('./dynamic/js/renderTitle.js'));
+  res.end();
+})
+
+app.get('/js/addToDo.js',(req,res)=>{
+  res.write(fs.readFileSync('./dynamic/js/addToDo.js'));
   res.end();
 })
 

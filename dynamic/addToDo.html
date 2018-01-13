@@ -3,30 +3,22 @@
   <head>
     <meta charset="utf-8">
     <title>Add New To-Do</title>
+    <script src="js/addToDo.js" charset="utf-8"></script>
   </head>
   <body>
     <a href="homePage">Go back to Home</a>
     <a href="/logout">Logout</a>
-    <div id="form">
-    <form  action="newToDo" method="post">
+    <div>
+    <form id="form" action="newToDo" method="post">
       Title:
       <textarea name="title" rows="1" cols="30"></textarea><br>
       Description:
       <textarea name="description" rows="1" cols="60"></textarea><hr>
       To-Do Lists:<hr>
-      1:
-      <textarea name="1" rows="2" cols="100"></textarea><br>
-      2:
-      <textarea name="2" rows="2" cols="100"></textarea><br>
-      3:
-      <textarea name="3" rows="2" cols="100"></textarea><br>
-      4:
-      <textarea name="4" rows="2" cols="100"></textarea><br>
-      5:
-      <textarea name="5" rows="2" cols="100"></textarea><br>
-
+      <textarea name="items" rows="15" cols="100"></textarea><hr>
       <input type="submit" value="Submit">
     </form>
+    <button type="button" name="moreLines" onclick="addMoreLines()">Add more lines</button>
   </div>
   <div id="toDoLists">
 

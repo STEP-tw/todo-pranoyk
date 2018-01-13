@@ -4,6 +4,7 @@ const WebApp = require('./webApp.js');
 const NewToDo = require('./lib/newToDo.js');
 const loginPage = fs.readFileSync('./static/login.html');
 const home = fs.readFileSync('./dynamic/homePage.html');
+const data = fs.readFileSync('./data/pranoy.js','utf8');
 
 let toS = o=>JSON.stringify(o,null,2);
 
@@ -57,6 +58,23 @@ const storeToDo = (req,res)=>{
   let retrievedData = retrieveData(toDoItems,req,res);
   fs.writeFileSync(`./data/${req.user.name}.js`,retrievedData);
   res.redirect('/homePage');
+}
+
+const retrieveReqTodo = (reqTodo,req,res)=>{
+  let reqData = '';
+  reqData+=`Title : ${reqTodo.title} \n Description : ${reqTodo.description} \n Todo Item : ${reqTodo.toDoItems}`;
+  res.write(`<a href="homePage">Go back to Home</a>\n<a href="/logout">logout</a>\n${reqData}`);
+  res.end();
+}
+
+const showTodo = (req,res)=>{
+  let name = req.user.name;
+  let requiredTitle = req.body.view;
+  let presentData = JSON.parse(data.split('= ')[1]);
+  let requiredTodo = presentData.filter(data=>{
+    return data.title==requiredTitle;
+  });
+  retrieveReqTodo(requiredTodo[0],req,res);
 }
 
 const serveDynamicFiles = (req,res)=>{
@@ -142,6 +160,10 @@ app.get('/viewToDo.html', (req,res)=>{
 
 app.post('/newToDo',(req,res)=>{
   storeToDo(req,res);
+})
+
+app.post('/viewTodo',(req,res)=>{
+  showTodo(req,res);
 })
 
 app.get('/data/pranoy.js',(req,res)=>{

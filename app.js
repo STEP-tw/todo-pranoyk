@@ -20,7 +20,7 @@ let logRequest = (req,res)=>{
   console.log(`${req.method} ${req.url}`);
 }
 
-let registered_users = [{userName:'pranoyk', name:'pranoy'}, {userName:'pavanigbn', name:'pavani'}, {userName:'rahulp', name:'rahul'}];
+let registered_users = [{userName:'pranoyk', name:'pranoy'}];
 
 let loadUser = (req,res)=>{
   let sessionid = req.cookies.sessionid;
@@ -62,8 +62,10 @@ const storeToDo = (req,res)=>{
 
 const retrieveReqTodo = (reqTodo,req,res)=>{
   let reqData = '';
-  reqData+=`Title : ${reqTodo.title} \n Description : ${reqTodo.description} \n Todo Item : ${reqTodo.toDoItems}`;
-  res.write(`<a href="homePage">Go back to Home</a>\n<a href="/logout">logout</a>\n${reqData}`);
+  reqData+=`<b>Title : </b>${reqTodo.title} <br> <b>Description :</b> ${reqTodo.description} <br> <b>Todo Item :</b> ${reqTodo.toDoItems}`;
+  res.write(`<a href="homePage">Go back to Home</a><br>`);
+  res.write(`<a href="/logout">logout</a><hr>`);
+  res.write(`${reqData}`);
   res.end();
 }
 

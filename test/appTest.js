@@ -16,17 +16,18 @@ describe('app',()=>{
   })
 
   describe('GET /',()=>{
-    it('redirects to login.html',done=>{
+    it('serves to login.html',done=>{
       request(app,{method:'GET',url:'/'},(res)=>{
-        th.should_be_redirected_to(res,'/login.html');
+        th.status_is_ok(res);
+        th.body_contains(res,'Login');
         done();
       })
     })
   })
 
-  describe('GET /login.html',()=>{
+  describe('GET /login',()=>{
     it('gives the login page',done=>{
-      request(app,{method:'GET',url:'/login.html'},res=>{
+      request(app,{method:'GET',url:'/login'},res=>{
         th.status_is_ok(res);
         th.body_contains(res,'Your TO-DO');
         done();
@@ -34,7 +35,7 @@ describe('app',()=>{
     })
   })
 
-  describe('GET /addToDo.html',()=>{
+  describe.skip('GET /addToDo.html',()=>{
     it('gives add To-Do page when user id logged in',done=>{
       request(app,{method:'GET',url:'/addToDo.html'},res=>{
         th.status_is_ok(res);
@@ -46,7 +47,7 @@ describe('app',()=>{
 
   describe('GET /login.html',()=>{
     it('serves the login page',done=>{
-      request(app,{method:'GET',url:'/login.html'},res=>{
+      request(app,{method:'GET',url:'/login'},res=>{
         th.status_is_ok(res);
         th.body_does_not_contain(res,'login failed');
         th.should_not_have_cookie(res,'message');
@@ -54,7 +55,7 @@ describe('app',()=>{
       })
     })
     it('serves the login page with message for a failed login',done=>{
-      request(app,{method:'GET',url:'/login.html',headers:{'cookie':'message=login failed'}},res=>{
+      request(app,{method:'GET',url:'/login',headers:{'cookie':'message=login failed'}},res=>{
         th.status_is_ok(res);
         th.should_not_have_cookie(res,'message');
         th.should_not_have_cookie(res,'sessionid');
@@ -65,15 +66,16 @@ describe('app',()=>{
 
   describe('POST /login.html',()=>{
     it('redirects to homePage for valid user',done=>{
-      request(app,{method:'POST',url:'/login.html',body:'userName=pranoyk'},res=>{
+      request(app,{method:'POST',url:'/login',body:'userName=pranoyk'},res=>{
         th.should_be_redirected_to(res,'/homePage');
+        th.body_contains(res, 'Hello Pranoy')
         th.should_not_have_cookie(res,'message');
         done();
       })
     })
-    it('redirects to login.html with message for invalid user',done=>{
-      request(app,{method:'POST',url:'/login.html',body:'username=badUser'},res=>{
-        th.should_be_redirected_to(res,'/login.html');
+    it('redirects to login with message for invalid user',done=>{
+      request(app,{method:'POST',url:'/login',body:'username=badUser'},res=>{
+        th.should_be_redirected_to(res,'/login');
         th.should_have_expiring_cookie(res,'message','Login Failed');
         done();
       })

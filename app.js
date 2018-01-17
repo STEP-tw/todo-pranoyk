@@ -3,6 +3,7 @@ const timeStamp = require('./time.js').timeStamp;
 const WebApp = require('./webApp.js');
 const NewToDo = require('./lib/newToDo.js');
 const loginPage = fs.readFileSync('./static/login.html');
+const User = require('./lib/user');
 const home = fs.readFileSync('./dynamic/homePage.html');
 const data = fs.readFileSync('./data/pranoy.js','utf8');
 

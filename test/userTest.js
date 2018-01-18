@@ -6,23 +6,34 @@ describe('User',()=>{
   describe('addNewTodo()',()=>{
     it('should add new todo in users all todos',()=>{
       let user = new User('pranoy');
-      user.addNewTodo('home','todays work','eat\r\nsleep\r\ncode\r\nrepeat');
+      user.addNewTodo(1,'home','todays work',['eat','sleep']);
       let expected = {};
       expected[1] =
         {title:'home',
         description:'todays work',
-        toDoItems:['eat','sleep','code','repeat']
+        toDoItems:{
+          "1": {
+            "content": "eat",
+            "isDone": false
+          },
+          "2": {
+            "content": "sleep",
+            "isDone": false
+          }
+        },
+        todoItemCount: 3
       }
       assert.deepEqual(expected,user.todos);
     })
     it('should store data with a todos field empty',()=>{
       let user = new User('pranoy');
-      user.addNewTodo('home','todays work');
+      user.addNewTodo(1,'home','todays work');
       let expected = {};
       expected[1] =
         {title:'home',
         description:'todays work',
-        toDoItems:[]
+        toDoItems:{},
+        todoItemCount:1
       }
       assert.deepEqual(expected,user.todos);
     })
@@ -34,30 +45,16 @@ describe('User',()=>{
     })
   })
 
-  describe('getExistingTodo()',()=>{
+  describe.skip('getExistingTodo()',()=>{
     it('should return existing todo',()=>{
       let user = new User('pranoy');
       user.addNewTodo('home','todays work');
       let expected = {};
       expected['title'] = 'home';
       expected['description'] = 'todays work';
-      expected['toDoItems'] = [];
+      expected['toDoItems'] = {};
+      expected['todoItemCount'] = 1;
       assert.deepEqual(user.getExistingTodo(1),expected);
-    })
-  })
-
-  describe('editExistingTodo()',()=>{
-    it('should edit existing todo with given fields',()=>{
-      let user = new User('pranoy');
-      user.addNewTodo('home','todays work','eat\r\nsleep\r\ncode\r\nrepeat');
-      user.editExistingTodo(1,'Home',`Today's work`,'eat\r\ncode\r\nsleep\r\nrepeat');
-      let expected = {};
-      expected[1] =
-        {title:'Home',
-        description:`Today's work`,
-        toDoItems:['eat','code','sleep','repeat']
-        }
-      assert.deepEqual(expected,user.todos);
     })
   })
 })

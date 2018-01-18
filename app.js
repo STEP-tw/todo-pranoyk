@@ -1,16 +1,13 @@
 const fs = require('fs');
 const timeStamp = require('./time.js').timeStamp;
 const WebApp = require('./webApp.js');
-const NewToDo = require('./lib/newToDo.js');
 const loginPage = fs.readFileSync('./static/login.html');
-const loginPageCss = fs.readFileSync('./static/css/login.css');
 const User = require('./lib/user.js');
 const registered_users = require('./lib/userRegistry.js').userRegistry;
+const LoginHandler = require('./handlers/login_handler.js');
+const PostLoginHandler = require('./handlers/post_login_handler.js');
+let allUser = JSON.parse(fs.readFileSync('./data/todos.json'));
 let homePage = fs.readFileSync('./dynamic/homePage.html','utf8');
-let newUser = {};
-
-const home = fs.readFileSync('./dynamic/homePage.html');
-const data = fs.readFileSync('./data/pranoy.js','utf8');
 
 const toS = o=>JSON.stringify(o,null,2);
 
@@ -34,18 +31,26 @@ const loadUser = (req,res)=>{
   }
 };
 
-const serveLoginPage = (req,res)=>{
-  if(req.urlIsOneOf(['/','/login']) && !req.user) {
-    res.write(loginPage);
-    res.end();
-  } else if (req.url=='/css/login.css') {
-    res.write(loginPageCss);
-    res.end();
+const getHeader = function (file) {
+  let extension = file.slice(file.lastIndexOf('.'));
+  let headers = {
+    '.html' : 'text/html',
+    '.jpg' : 'text/jpg',
+    '.pdf' : 'text/pdf',
+    '.css' : 'text/css',
+    '.gif' : 'text/gif',
+    '.js' : 'text/js'
   }
+  return headers[extension];
+}
+
+const writeToJSONFile = (res,userData)=>{
+  fs.writeFileSync('./data/todos.json',JSON.stringify(userData,null,2));
+  res.redirect('/homePage');
 }
 
 const redirectToLoginPage = (req,res)=>{
-  if(req.urlIsOneOf(['/homePage'])) {
+  if(req.urlIsOneOf(['/','login','/homePage','/addToDo','/newToDo','/viewToDo']) && !req.user) {
     res.redirect('/login');
   }
 }
@@ -56,19 +61,26 @@ const serveHomePage = (req,res)=>{
   }
 }
 
+const serveStaticFiles = (req,res)=>{
+  if(req.url.includes('static/')){
+    res.setHeader('Content-Type',getHeader(req.url));
+    res.write(fs.readFileSync('./'+req.url))
+    res.end();
+  }
+}
+
 let app = WebApp.create();
 app.usePreProcessor(logRequest);
 app.usePreProcessor(loadUser);
-app.usePostProcessor(serveLoginPage);
 app.usePostProcessor(redirectToLoginPage);
 app.usePostProcessor(serveHomePage);
+app.usePreProcessor(serveStaticFiles);
 
-app.get('/login', (req,res)=>{
-  res.setHeader('Content-type','text/html')
-  if(req.cookies.message)
-    res.write(`Login Failed \n Invalid User`);
-  res.write(loginPage);
-  res.end();
+let login = new LoginHandler();
+app.get('/login',login.getRequestHandler());
+
+app.get('/logout',(req,res)=>{
+  res.redirect('/login');
 })
 
 app.get('/homePage', (req,res)=>{
@@ -79,20 +91,42 @@ app.get('/homePage', (req,res)=>{
   }
 })
 
-app.post('/login',(req,res)=>{
-  let user = registered_users.find(u=>u.userName==req.body.userName);
-  console.log(user);
-  if(!user) {
-    res.setHeader('Set-Cookie',`message=Login Failed; Max-Age=5`);
-    res.redirect('/login');
-    return;
+app.get('/addToDo',(req,res)=>{
+  if(req.user){
+    res.write(fs.readFileSync('./dynamic/addToDo.html'));
+    res.end();
   }
-  let sessionid = new Date().getTime();
-  res.setHeader('Set-Cookie',`sessionid=${sessionid}`);
-  user.sessionid = sessionid;
-  console.log(sessionid);
-  newUser = new User(user.name);
-  res.redirect('/homePage');
-});
+})
+
+app.get('/viewToDo',(req,res)=>{
+  res.write(fs.readFileSync('./dynamic/viewToDo.html'),'utf8');
+  res.end();
+})
+
+app.get('/viewTodo',(req,res)=>{
+  res.write(JSON.stringify(allUser)||"");
+  res.end();
+})
+
+let postLogin = new PostLoginHandler(registered_users);
+app.post('/login',postLogin.getRequestHandler());
+
+app.post('/newToDo',(req,res)=>{
+  let user = allUser.find(u=>u.userName==req.user.userName);
+  let newUser = new User(registered_users[0]['name']);
+  let todoCount = registered_users[0].count;
+  console.log('items===============>',req.body.items);
+  let item = req.body.items;
+  if(typeof(item)=='string'){
+    let todoItem = [];
+    todoItem.push(item);
+    newUser.addNewTodo(todoCount,req.body.title,req.body.description,todoItem);
+  } else {
+    newUser.addNewTodo(todoCount,req.body.title,req.body.description,item);
+  }
+  registered_users[0].count++;
+  allUser.unshift(newUser);
+  writeToJSONFile(res,allUser);
+})
 
 exports.app = app;

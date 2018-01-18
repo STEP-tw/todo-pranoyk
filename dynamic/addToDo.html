@@ -3,19 +3,20 @@
   <head>
     <meta charset="utf-8">
     <title>Add New To-Do</title>
-    <script src="js/addToDo.js" charset="utf-8"></script>
+    <script src="../static/js/addToDo.js" charset="utf-8"></script>
   </head>
   <body>
-    <a href="homePage">Go back to Home</a>
-    <a href="/logout">Logout</a>
+    <a href="homePage">Go back to Home</a><br>
+    <a href="/logout">Logout</a><hr>
     <div>
-    <form id="form" action="newToDo" method="post">
-      Title:
+    <form id="addTodoForm" action="newToDo" method="post">
+      <h2>Add new todo</h2>
+      <u>Title:</u>
       <textarea name="title" rows="1" cols="30"></textarea><br>
-      Description:
-      <textarea name="description" rows="1" cols="60"></textarea><hr>
-      To-Do Lists:<hr>
-      <textarea name="items" rows="15" cols="100"></textarea><hr>
+      <u>Description:</u>
+      <textarea name="description" rows="1" cols="60"></textarea>
+      <p><div id="addTextBox"></div></p>
+      <button type="button" onclick="addMoreLine()">Add todo item</button>
       <input type="submit" value="Submit">
     </form>
   </div>

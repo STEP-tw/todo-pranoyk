@@ -16,10 +16,9 @@ describe('app',()=>{
   })
 
   describe('GET /',()=>{
-    it('serves to login.html',done=>{
+    it('redirects to login',done=>{
       request(app,{method:'GET',url:'/'},(res)=>{
-        th.status_is_ok(res);
-        th.body_contains(res,'Login');
+        th.should_be_redirected_to(res,'/login');
         done();
       })
     })
@@ -35,11 +34,11 @@ describe('app',()=>{
     })
   })
 
-  describe.skip('GET /addToDo.html',()=>{
+  describe.skip('GET /addToDo',()=>{
     it('gives add To-Do page when user id logged in',done=>{
-      request(app,{method:'GET',url:'/addToDo.html'},res=>{
+      request(app,{method:'GET',url:'/addToDo',body:'userName=pranoyk'},res=>{
         th.status_is_ok(res);
-        th.body_contains(res,'New To-Do');
+        th.body_contains(res,'Title');
         done();
       })
     })
@@ -68,7 +67,6 @@ describe('app',()=>{
     it('redirects to homePage for valid user',done=>{
       request(app,{method:'POST',url:'/login',body:'userName=pranoyk'},res=>{
         th.should_be_redirected_to(res,'/homePage');
-        th.body_contains(res, 'Hello Pranoy')
         th.should_not_have_cookie(res,'message');
         done();
       })

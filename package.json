@@ -8,7 +8,7 @@
   "name": "todo_app",
   "description": "## Objective",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "server.js",
   "directories": {
     "lib": "lib",
     "test": "test"
